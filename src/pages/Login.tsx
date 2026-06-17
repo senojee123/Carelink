@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import axios from 'axios';
+import { API_BASE_URL } from '../constants/config';
 
 const DEMO_USERS = [
   { name: 'Sarah Mitchell', email: 'sarah@carelink.com', role: '3 Elders' },
@@ -24,6 +26,20 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [showDemo, setShowDemo] = useState(false);
+  const [backendStatus, setBackendStatus] = useState<'checking' | 'ok' | 'slow'>('checking');
+
+  // Wake up Render backend on mount (free tier sleeps)
+  useEffect(() => {
+    const wake = async () => {
+      try {
+        await axios.get(`${API_BASE_URL}/health`, { timeout: 8000 });
+        setBackendStatus('ok');
+      } catch {
+        setBackendStatus('slow');
+      }
+    };
+    wake();
+  }, []);
 
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault();
@@ -34,7 +50,15 @@ export default function Login() {
       await login(email.trim().toLowerCase(), password);
       navigate('/');
     } catch (err: any) {
-      setError(err?.response?.data?.error || 'Login failed. Please check your credentials.');
+      if (err.code === 'ECONNABORTED' || err.message?.includes('timeout') || err.message?.includes('Network')) {
+        setError('⏳ The server is waking up (Render free tier). Please wait 30 seconds and try again.');
+      } else if (err?.response?.status === 401) {
+        setError('❌ Invalid email or password. Try: sarah@carelink.com / CareLink@123');
+      } else if (err?.response?.data?.error) {
+        setError(err.response.data.error);
+      } else {
+        setError(`Login failed: ${err.message || 'Unknown error'}. Check the browser console for details.`);
+      }
     } finally { setLoading(false); }
   }
 
@@ -69,6 +93,11 @@ export default function Login() {
           <div className="auth-form-title">Welcome back</div>
           <div className="auth-form-sub">Sign in to your caregiver account</div>
 
+          {backendStatus === 'slow' && !error && (
+            <div style={{ color: '#F59E0B', fontSize: 13, marginBottom: 12, padding: '8px 12px', background: 'rgba(245,158,11,0.08)', borderRadius: 8, border: '1px solid rgba(245,158,11,0.25)' }}>
+              ⏳ Backend is waking up (Render free tier)... first login may take ~30 seconds.
+            </div>
+          )}
           {error && <div className="form-error">{error}</div>}
 
           <form onSubmit={handleLogin}>
