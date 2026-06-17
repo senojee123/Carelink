@@ -10,8 +10,9 @@ const TYPES = [
   { key: 'meal', label: 'Meal', icon: '🍽️' },
   { key: 'activity', label: 'Activity', icon: '🏃' },
 ];
+const ICONS: any = { medication: '💊', meal: '🍽️', activity: '🏃' };
 
-function ScheduleForm({ initial, onSubmit, onCancel, submitLabel }: any) {
+function ScheduleForm({ initial, onSubmit, submitLabel }: any) {
   const [type, setType] = useState(initial?.type || 'medication');
   const [label, setLabel] = useState(initial?.label || '');
   const [time, setTime] = useState(initial?.scheduled_time?.slice(0, 5) || '08:00');
@@ -23,32 +24,24 @@ function ScheduleForm({ initial, onSubmit, onCancel, submitLabel }: any) {
     e.preventDefault();
     if (!label.trim()) { alert('Please enter a label.'); return; }
     setLoading(true);
-    try {
-      await onSubmit({ type, label: label.trim(), scheduled_time: time, recurrence, notes: notes.trim() || null });
-    } finally {
-      setLoading(false);
-    }
+    try { await onSubmit({ type, label: label.trim(), scheduled_time: time, recurrence, notes: notes.trim() || null }); }
+    finally { setLoading(false); }
   }
 
   return (
     <form onSubmit={handleSubmit}>
-      <div className="field-group" style={{ marginTop: 0 }}>
+      <div className="field-group">
         <label className="field-label">Type</label>
-        <div style={{ display: 'flex', gap: 10 }}>
+        <div style={{ display: 'flex', gap: 8 }}>
           {TYPES.map(t => (
-            <button
-              key={t.key}
-              type="button"
-              onClick={() => setType(t.key)}
-              style={{
-                flex: 1, background: type === t.key ? Colors.primaryGlow : '#1A2640',
-                border: `1px solid ${type === t.key ? Colors.primary : '#243050'}`,
-                borderRadius: 12, padding: '12px 8px', cursor: 'pointer',
-                display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4,
-              }}
-            >
-              <span style={{ fontSize: 22 }}>{t.icon}</span>
-              <span style={{ fontSize: 12, color: type === t.key ? Colors.primary : '#94A3B8', fontWeight: 600 }}>{t.label}</span>
+            <button key={t.key} type="button" onClick={() => setType(t.key)} style={{
+              flex: 1, background: type === t.key ? Colors.primaryGlow : '#0D1526',
+              border: `1px solid ${type === t.key ? Colors.primary : '#1E2C45'}`,
+              borderRadius: 10, padding: '10px 6px', cursor: 'pointer',
+              display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4,
+            }}>
+              <span style={{ fontSize: 20 }}>{t.icon}</span>
+              <span style={{ fontSize: 11, color: type === t.key ? Colors.primary : '#94A3B8', fontWeight: 600 }}>{t.label}</span>
             </button>
           ))}
         </div>
@@ -61,39 +54,28 @@ function ScheduleForm({ initial, onSubmit, onCancel, submitLabel }: any) {
 
       <div className="field-group">
         <label className="field-label">Time</label>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
           {TIME_OPTIONS.map(t => (
-            <button
-              key={t}
-              type="button"
-              onClick={() => setTime(t)}
-              style={{
-                background: time === t ? Colors.primaryGlow : '#1A2640',
-                border: `1px solid ${time === t ? Colors.primary : '#243050'}`,
-                borderRadius: 10, padding: '8px 12px', cursor: 'pointer',
-                color: time === t ? Colors.primary : '#94A3B8', fontSize: 13,
-                fontWeight: time === t ? 700 : 500,
-              }}
-            >{t}</button>
+            <button key={t} type="button" onClick={() => setTime(t)} style={{
+              background: time === t ? Colors.primaryGlow : '#0D1526',
+              border: `1px solid ${time === t ? Colors.primary : '#1E2C45'}`,
+              borderRadius: 8, padding: '6px 10px', cursor: 'pointer',
+              color: time === t ? Colors.primary : '#94A3B8', fontSize: 12, fontWeight: time === t ? 700 : 500,
+            }}>{t}</button>
           ))}
         </div>
       </div>
 
       <div className="field-group">
         <label className="field-label">Recurrence</label>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
           {RECURRENCES.map(r => (
-            <button
-              key={r}
-              type="button"
-              onClick={() => setRecurrence(r)}
-              style={{
-                background: recurrence === r ? Colors.primaryGlow : '#1A2640',
-                border: `1px solid ${recurrence === r ? Colors.primary : '#243050'}`,
-                borderRadius: 16, padding: '7px 14px', cursor: 'pointer',
-                color: recurrence === r ? Colors.primary : '#94A3B8', fontSize: 12, fontWeight: 500,
-              }}
-            >{r}</button>
+            <button key={r} type="button" onClick={() => setRecurrence(r)} style={{
+              background: recurrence === r ? Colors.primaryGlow : '#0D1526',
+              border: `1px solid ${recurrence === r ? Colors.primary : '#1E2C45'}`,
+              borderRadius: 16, padding: '6px 14px', cursor: 'pointer',
+              color: recurrence === r ? Colors.primary : '#94A3B8', fontSize: 12, fontWeight: 500,
+            }}>{r}</button>
           ))}
         </div>
       </div>
@@ -103,12 +85,9 @@ function ScheduleForm({ initial, onSubmit, onCancel, submitLabel }: any) {
         <input className="field-input" value={notes} onChange={e => setNotes(e.target.value)} placeholder="e.g. Take with food" />
       </div>
 
-      <div className="modal-actions">
-        <button type="button" className="modal-cancel-btn" onClick={onCancel}>Cancel</button>
-        <button type="submit" className="modal-confirm-btn" disabled={loading}>
-          {loading ? <span className="spinner" style={{ width: 16, height: 16, borderWidth: 2, display: 'inline-block' }} /> : submitLabel}
-        </button>
-      </div>
+      <button type="submit" className="btn-gradient" style={{ width: '100%' }} disabled={loading}>
+        {loading ? <span className="spinner" style={{ width: 16, height: 16, borderWidth: 2 }} /> : submitLabel}
+      </button>
     </form>
   );
 }
@@ -119,22 +98,16 @@ export default function ElderScheduler() {
   const [schedules, setSchedules] = useState<any[]>([]);
   const [elderName, setElderName] = useState('');
   const [loading, setLoading] = useState(true);
-  const [showAdd, setShowAdd] = useState(false);
   const [editSchedule, setEditSchedule] = useState<any>(null);
+  const [addMode, setAddMode] = useState(true);
 
   const loadData = useCallback(async () => {
     try {
-      const [schedRes, elderRes] = await Promise.all([
-        schedulesApi.list(elderId!),
-        eldersApi.get(elderId!),
-      ]);
+      const [schedRes, elderRes] = await Promise.all([schedulesApi.list(elderId!), eldersApi.get(elderId!)]);
       setSchedules(schedRes.data);
       setElderName(elderRes.data.name);
-    } catch {
-      alert('Failed to load schedules');
-    } finally {
-      setLoading(false);
-    }
+    } catch { alert('Failed to load schedules'); }
+    finally { setLoading(false); }
   }, [elderId]);
 
   useEffect(() => { loadData(); }, [loadData]);
@@ -146,97 +119,102 @@ export default function ElderScheduler() {
     }
   }
 
-  const icons: any = { medication: '💊', meal: '🍽️', activity: '🏃' };
   const grouped: any = { medication: [], meal: [], activity: [] };
   schedules.forEach(s => { if (grouped[s.type]) grouped[s.type].push(s); });
 
   return (
-    <div className="scheduler-page">
-      <div className="scheduler-header" style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-        <button className="back-btn" onClick={() => navigate(-1)}>← Back</button>
-        <div style={{ flex: 1 }}>
-          <div style={{ fontSize: 20, fontWeight: 800, color: '#F1F5F9' }}>📅 Schedule</div>
-          <div style={{ fontSize: 13, color: '#94A3B8', marginTop: 2 }}>{elderName}</div>
+    <div>
+      <button className="back-btn" onClick={() => navigate(-1)}>← Back</button>
+
+      <div className="page-header">
+        <div>
+          <div className="page-title">📅 Schedule Manager</div>
+          <div className="page-sub">{elderName}</div>
         </div>
-        <button
-          className="add-btn"
-          onClick={() => setShowAdd(true)}
-          style={{ whiteSpace: 'nowrap' }}
-        >+ Add</button>
       </div>
 
       {loading ? (
         <div className="loading-screen"><div className="spinner" /></div>
       ) : (
-        <div>
-          {Object.entries(grouped).filter(([, items]: any) => items.length > 0).map(([type, items]: any) => (
-            <div key={type} style={{ marginBottom: 24 }}>
-              <div style={{ fontSize: 16, fontWeight: 700, color: '#F1F5F9', marginBottom: 12 }}>
-                {icons[type]} {type.charAt(0).toUpperCase() + type.slice(1)}s
-              </div>
-              {items.map((s: any) => (
-                <div key={s.id} className="schedule-item-card">
-                  <div style={{ flex: 1 }}>
-                    <div style={{ fontSize: 15, color: '#F1F5F9', fontWeight: 600 }}>{s.label}</div>
-                    <div style={{ fontSize: 12, color: '#94A3B8', marginTop: 3 }}>{s.recurrence} · {s.scheduled_time?.slice(0, 5)}</div>
-                    {s.notes && <div style={{ fontSize: 12, color: '#4B6285', marginTop: 2 }}>{s.notes}</div>}
-                  </div>
-                  <button
-                    style={{ background: Colors.primaryGlow, border: `1px solid ${Colors.primary}`, width: 32, height: 32, borderRadius: 16, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontSize: 14, marginLeft: 8 }}
-                    onClick={() => setEditSchedule(s)}
-                  >✏️</button>
-                  <button
-                    className="schedule-del-btn"
-                    onClick={() => deleteSchedule(s.id, s.label)}
-                  >✕</button>
+        <div className="scheduler-layout">
+          {/* Schedule list */}
+          <div>
+            {Object.entries(grouped).filter(([, items]: any) => items.length > 0).map(([type, items]: any) => (
+              <div key={type} style={{ marginBottom: 24 }}>
+                <div style={{ fontSize: 15, fontWeight: 700, color: '#F1F5F9', marginBottom: 10 }}>
+                  {ICONS[type]} {type.charAt(0).toUpperCase() + type.slice(1)}s
                 </div>
-              ))}
-            </div>
-          ))}
+                {items.map((s: any) => (
+                  <div key={s.id} className="schedule-item-card">
+                    <span style={{ fontSize: 20 }}>{ICONS[s.type]}</span>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontSize: 14, color: '#F1F5F9', fontWeight: 600 }}>{s.label}</div>
+                      <div style={{ fontSize: 12, color: '#94A3B8', marginTop: 2 }}>{s.recurrence} · {s.scheduled_time?.slice(0, 5)}</div>
+                      {s.notes && <div style={{ fontSize: 12, color: '#4B6285', marginTop: 2 }}>{s.notes}</div>}
+                    </div>
+                    <button className="schedule-edit-btn" onClick={() => { setEditSchedule(s); setAddMode(false); }}>Edit</button>
+                    <button className="schedule-del-btn" onClick={() => deleteSchedule(s.id, s.label)}>✕</button>
+                  </div>
+                ))}
+              </div>
+            ))}
 
-          {schedules.length === 0 && (
-            <div className="empty-state">
-              <div className="empty-icon">📅</div>
-              <div className="empty-title">No schedules yet</div>
-              <div className="empty-text">Tap + Add to create one</div>
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* Add modal */}
-      {showAdd && (
-        <div className="modal-overlay">
-          <div className="menu-modal" style={{ maxWidth: 460 }} onClick={e => e.stopPropagation()}>
-            <div className="menu-title" style={{ marginBottom: 20 }}>Add Schedule Item</div>
-            <ScheduleForm
-              submitLabel="Add Schedule"
-              onCancel={() => setShowAdd(false)}
-              onSubmit={async (data: any) => {
-                await schedulesApi.create({ elder_id: elderId, ...data });
-                setShowAdd(false);
-                loadData();
-              }}
-            />
+            {schedules.length === 0 && (
+              <div className="empty-state" style={{ paddingTop: 60 }}>
+                <div className="empty-icon">📅</div>
+                <div className="empty-title">No schedules yet</div>
+                <div className="empty-sub">Use the form on the right to add medications, meals and activities.</div>
+              </div>
+            )}
           </div>
-        </div>
-      )}
 
-      {/* Edit modal */}
-      {editSchedule && (
-        <div className="modal-overlay">
-          <div className="menu-modal" style={{ maxWidth: 460 }} onClick={e => e.stopPropagation()}>
-            <div className="menu-title" style={{ marginBottom: 20 }}>Edit Schedule Item</div>
-            <ScheduleForm
-              initial={editSchedule}
-              submitLabel="Save Changes"
-              onCancel={() => setEditSchedule(null)}
-              onSubmit={async (data: any) => {
-                await schedulesApi.update(editSchedule.id, data);
-                setEditSchedule(null);
-                loadData();
-              }}
-            />
+          {/* Add / Edit panel */}
+          <div className="add-schedule-panel">
+            <div style={{ display: 'flex', gap: 8, marginBottom: 20 }}>
+              <button
+                onClick={() => setAddMode(true)}
+                style={{
+                  flex: 1, padding: '9px', borderRadius: 8, border: '1px solid',
+                  borderColor: addMode ? Colors.primary : '#1E2C45',
+                  background: addMode ? Colors.primaryGlow : '#0D1526',
+                  color: addMode ? Colors.primary : '#94A3B8', fontWeight: 700, cursor: 'pointer', fontSize: 13,
+                }}
+              >+ Add New</button>
+              {editSchedule && (
+                <button
+                  onClick={() => setAddMode(false)}
+                  style={{
+                    flex: 1, padding: '9px', borderRadius: 8, border: '1px solid',
+                    borderColor: !addMode ? Colors.primary : '#1E2C45',
+                    background: !addMode ? Colors.primaryGlow : '#0D1526',
+                    color: !addMode ? Colors.primary : '#94A3B8', fontWeight: 700, cursor: 'pointer', fontSize: 13,
+                  }}
+                >✏️ Edit</button>
+              )}
+            </div>
+
+            {addMode ? (
+              <ScheduleForm
+                key="add"
+                submitLabel="+ Add to Schedule"
+                onSubmit={async (data: any) => {
+                  await schedulesApi.create({ elder_id: elderId, ...data });
+                  loadData();
+                }}
+              />
+            ) : editSchedule && (
+              <ScheduleForm
+                key={editSchedule.id}
+                initial={editSchedule}
+                submitLabel="✓ Save Changes"
+                onSubmit={async (data: any) => {
+                  await schedulesApi.update(editSchedule.id, data);
+                  setEditSchedule(null);
+                  setAddMode(true);
+                  loadData();
+                }}
+              />
+            )}
           </div>
         </div>
       )}

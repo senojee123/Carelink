@@ -15,87 +15,98 @@ export default function Register() {
 
   async function handleRegister(e: React.FormEvent) {
     e.preventDefault();
-    if (!form.name.trim() || !form.email.trim() || !form.password) {
-      setError('Please fill in your name, email, and password.');
-      return;
-    }
+    if (!form.name.trim() || !form.email.trim() || !form.password) { setError('Please fill in your name, email, and password.'); return; }
     if (form.password.length < 6) { setError('Password must be at least 6 characters.'); return; }
     if (form.password !== form.confirmPassword) { setError('Passwords do not match.'); return; }
-    setLoading(true);
-    setError('');
+    setLoading(true); setError('');
     try {
-      await register({
-        name: form.name.trim(),
-        email: form.email.trim().toLowerCase(),
-        password: form.password,
-        phone: form.phone.trim() || undefined,
-      });
+      await register({ name: form.name.trim(), email: form.email.trim().toLowerCase(), password: form.password, phone: form.phone.trim() || undefined });
       navigate('/');
     } catch (err: any) {
       setError(err?.response?.data?.error || 'Registration failed. Please try again.');
-    } finally {
-      setLoading(false);
-    }
+    } finally { setLoading(false); }
   }
 
-  const fields = [
-    { key: 'name', label: 'Full Name *', placeholder: 'e.g. Sarah Mitchell', icon: '👤', type: 'text' },
-    { key: 'email', label: 'Email Address *', placeholder: 'your@email.com', icon: '✉️', type: 'email' },
-    { key: 'phone', label: 'Phone (optional)', placeholder: '+1-555-0100', icon: '📱', type: 'tel' },
-    { key: 'password', label: 'Password *', placeholder: '••••••••', icon: '🔒', type: 'password' },
-    { key: 'confirmPassword', label: 'Confirm Password *', placeholder: '••••••••', icon: '🔐', type: 'password' },
-  ];
-
   return (
-    <div className="auth-bg">
-      <div className="auth-circle1" />
-      <div className="auth-circle2" />
-
-      <div className="auth-scroll">
-        <div className="logo-section">
-          <div className="logo-container" style={{ width: 70, height: 70, fontSize: 32, borderRadius: 22 }}>🏥</div>
-          <div className="brand-name" style={{ fontSize: 32 }}>CareLink</div>
-          <div className="tagline">Create your caregiver account</div>
-        </div>
-
-        <form className="auth-card" onSubmit={handleRegister}>
-          <div className="welcome-title" style={{ fontSize: 24 }}>Get Started</div>
-          <div className="welcome-sub">Join CareLink and care smarter</div>
-
-          {error && (
-            <div style={{ color: '#EF4444', fontSize: 13, marginBottom: 16, padding: '10px 14px', background: 'rgba(239,68,68,0.1)', borderRadius: 10, border: '1px solid rgba(239,68,68,0.3)' }}>
-              {error}
+    <div className="auth-page">
+      {/* Hero */}
+      <div className="auth-hero">
+        <div className="auth-hero-content">
+          <div className="auth-hero-logo">🏥</div>
+          <div className="auth-hero-title">Join CareLink</div>
+          <div className="auth-hero-sub">Create your caregiver account and start providing smarter, data-driven care for your elders.</div>
+          <div className="auth-features">
+            <div className="auth-feature-item">
+              <span className="auth-feature-icon">🆓</span>
+              <div className="auth-feature-text"><strong>Free to start</strong><br />Add up to 5 elders with full AI monitoring</div>
             </div>
-          )}
+            <div className="auth-feature-item">
+              <span className="auth-feature-icon">🔒</span>
+              <div className="auth-feature-text"><strong>Secure by design</strong><br />All data encrypted and stored in the cloud</div>
+            </div>
+            <div className="auth-feature-item">
+              <span className="auth-feature-icon">⚡</span>
+              <div className="auth-feature-text"><strong>Up in minutes</strong><br />Add your first elder in under 2 minutes</div>
+            </div>
+          </div>
+        </div>
+      </div>
 
-          {fields.map(field => (
-            <div key={field.key} className="input-group" style={{ marginBottom: 16 }}>
-              <label className="input-label">{field.label}</label>
-              <div className="input-wrapper">
-                <span className="input-icon">{field.icon}</span>
-                <input
-                  type={field.type}
-                  value={form[field.key as keyof typeof form]}
-                  onChange={e => update(field.key as keyof typeof form, e.target.value)}
-                  placeholder={field.placeholder}
-                  autoCapitalize={field.key === 'name' ? 'words' : 'none'}
-                  autoComplete={field.key === 'email' ? 'email' : field.key === 'password' ? 'new-password' : 'off'}
-                />
+      {/* Form */}
+      <div className="auth-form-side">
+        <div className="auth-form-container">
+          <div className="auth-form-title">Create your account</div>
+          <div className="auth-form-sub">Join thousands of caregivers using CareLink</div>
+
+          {error && <div className="form-error">{error}</div>}
+
+          <form onSubmit={handleRegister}>
+            <div className="form-field">
+              <label className="form-label">Full Name *</label>
+              <div className="form-input-wrap">
+                <span className="form-input-icon">👤</span>
+                <input type="text" value={form.name} onChange={e => update('name', e.target.value)} placeholder="e.g. Sarah Mitchell" autoComplete="name" />
               </div>
             </div>
-          ))}
+            <div className="form-field">
+              <label className="form-label">Email Address *</label>
+              <div className="form-input-wrap">
+                <span className="form-input-icon">✉️</span>
+                <input type="email" value={form.email} onChange={e => update('email', e.target.value)} placeholder="your@email.com" autoComplete="email" />
+              </div>
+            </div>
+            <div className="form-field">
+              <label className="form-label">Phone (optional)</label>
+              <div className="form-input-wrap">
+                <span className="form-input-icon">📱</span>
+                <input type="tel" value={form.phone} onChange={e => update('phone', e.target.value)} placeholder="+1-555-0100" />
+              </div>
+            </div>
+            <div className="form-field">
+              <label className="form-label">Password *</label>
+              <div className="form-input-wrap">
+                <span className="form-input-icon">🔒</span>
+                <input type="password" value={form.password} onChange={e => update('password', e.target.value)} placeholder="••••••••" autoComplete="new-password" />
+              </div>
+            </div>
+            <div className="form-field">
+              <label className="form-label">Confirm Password *</label>
+              <div className="form-input-wrap">
+                <span className="form-input-icon">🔐</span>
+                <input type="password" value={form.confirmPassword} onChange={e => update('confirmPassword', e.target.value)} placeholder="••••••••" />
+              </div>
+            </div>
 
-          <button type="submit" className="btn-gradient" disabled={loading} style={{ marginTop: 8 }}>
-            {loading ? <span className="spinner" style={{ width: 20, height: 20, borderWidth: 2, display: 'inline-block', verticalAlign: 'middle' }} /> : 'Create Account →'}
-          </button>
+            <button type="submit" className="btn-gradient full" disabled={loading}>
+              {loading ? <span className="spinner" style={{ width: 18, height: 18, borderWidth: 2 }} /> : 'Create Account →'}
+            </button>
+          </form>
 
-          <div className="sign-up-row" style={{ marginTop: 20 }}>
-            <span className="sign-up-text">Already have an account? </span>
-            <button type="button" className="sign-up-link" onClick={() => navigate('/login')}>Sign In</button>
+          <div className="form-footer-row">
+            <span className="form-footer-text">Already have an account?</span>
+            <button className="form-footer-link" onClick={() => navigate('/login')}>Sign In</button>
           </div>
-        </form>
-
-        <div className="auth-footer">© 2026 CareLink · Powered by Gemini AI</div>
+        </div>
       </div>
     </div>
   );

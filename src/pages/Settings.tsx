@@ -13,41 +13,67 @@ export default function Settings() {
     }
   }
 
-  const items = [
-    { icon: '👤', label: 'Account', sub: caregiver?.name || '' },
-    { icon: '✉️', label: 'Email', sub: caregiver?.email || '' },
-    { icon: '📱', label: 'Phone', sub: caregiver?.phone || 'Not set' },
-    { icon: 'ℹ️', label: 'App Version', sub: '1.0.0 (PWA)' },
-    { icon: '🤖', label: 'AI Engine', sub: 'Gemini 2.0 Flash' },
-    { icon: '🗄️', label: 'Database', sub: 'Neon PostgreSQL (Cloud)' },
-  ];
-
   return (
-    <div className="dashboard-bg">
-      <div className="settings-scroll">
-        <div className="settings-title">Settings ⚙️</div>
+    <div>
+      <div className="page-header">
+        <div>
+          <div className="page-title">⚙️ Settings</div>
+          <div className="page-sub">Manage your account and preferences</div>
+        </div>
+      </div>
 
-        <div className="avatar-section">
-          <div className="avatar-circle">{caregiver?.name?.[0] || 'C'}</div>
-          <div className="caregiver-name">{caregiver?.name}</div>
-          <div className="caregiver-role">CareLink Caregiver</div>
+      <div className="settings-layout">
+        {/* Profile card */}
+        <div className="settings-profile-card">
+          <div className="settings-avatar">{caregiver?.name?.[0] || 'C'}</div>
+          <div className="settings-name">{caregiver?.name}</div>
+          <div className="settings-role">CareLink Caregiver</div>
+          <button className="logout-btn" onClick={handleLogout} style={{ marginTop: 8 }}>
+            Sign Out
+          </button>
         </div>
 
-        <div className="settings-section">
-          {items.map(item => (
-            <div key={item.label} className="settings-row">
-              <span className="row-icon">{item.icon}</span>
-              <div>
-                <div className="row-label">{item.label}</div>
-                <div className="row-sub">{item.sub}</div>
+        {/* Settings panels */}
+        <div>
+          <div className="settings-section">
+            <div className="settings-section-title">Account Details</div>
+            {[
+              { icon: '👤', label: 'Full Name', sub: caregiver?.name || '—' },
+              { icon: '✉️', label: 'Email Address', sub: caregiver?.email || '—' },
+              { icon: '📱', label: 'Phone', sub: caregiver?.phone || 'Not set' },
+            ].map(row => (
+              <div key={row.label} className="settings-row">
+                <span className="row-icon">{row.icon}</span>
+                <div>
+                  <div className="row-label">{row.label}</div>
+                  <div className="row-sub">{row.sub}</div>
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
+
+          <div className="settings-section">
+            <div className="settings-section-title">System Information</div>
+            {[
+              { icon: 'ℹ️', label: 'App Version', sub: '1.0.0 (PWA)' },
+              { icon: '🤖', label: 'AI Engine', sub: 'Gemini 2.0 Flash' },
+              { icon: '🗄️', label: 'Database', sub: 'Neon PostgreSQL (Cloud)' },
+              { icon: '🌐', label: 'Backend', sub: 'carelink-backend-wenq.onrender.com' },
+            ].map(row => (
+              <div key={row.label} className="settings-row">
+                <span className="row-icon">{row.icon}</span>
+                <div>
+                  <div className="row-label">{row.label}</div>
+                  <div className="row-sub">{row.sub}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <p style={{ fontSize: 12, color: '#4B6285', textAlign: 'center', marginTop: 8 }}>
+            CareLink PWA · Built with React + Vite + Gemini AI
+          </p>
         </div>
-
-        <button className="logout-btn" onClick={handleLogout}>Sign Out</button>
-
-        <div className="settings-footer">CareLink PWA · Built with Gemini AI + Neon DB</div>
       </div>
     </div>
   );
