@@ -1,42 +1,43 @@
 export const Colors = {
-  background: '#0B1120',
-  surface: '#131D31',
-  surfaceElevated: '#1A2640',
-  surfaceHigh: '#1F2E4A',
-  border: '#243050',
-  borderLight: '#2E3E60',
+  background: '#FAF9F6',
+  surface: '#FFFFFF',
+  surfaceElevated: '#FFFFFF',
+  surfaceHigh: '#F8FAFC',
+  border: '#E2E8F0',
+  borderLight: '#F1F5F9',
 
-  primary: '#4E8EFF',
-  primaryLight: '#7AABFF',
-  primaryDark: '#3A6BCC',
-  primaryGlow: 'rgba(78,142,255,0.15)',
+  primary: '#0D9488', // Warm teal
+  primaryLight: '#2DD4BF',
+  primaryDark: '#0F766E',
+  primaryGlow: 'rgba(13,148,136,0.1)',
 
-  accent: '#9B7FEA',
-  accentGlow: 'rgba(155,127,234,0.15)',
+  accent: '#8B5CF6', // Soft lavender
+  accentGlow: 'rgba(139,92,246,0.1)',
 
-  success: '#3ECF8E',
-  successGlow: 'rgba(62,207,142,0.15)',
-  warning: '#F59E0B',
-  warningGlow: 'rgba(245,158,11,0.15)',
-  danger: '#EF4444',
-  dangerGlow: 'rgba(239,68,68,0.15)',
+  success: '#16A34A', // Soft green
+  successGlow: 'rgba(22,163,74,0.1)',
+  warning: '#D97706', // Warm amber
+  warningGlow: 'rgba(217,119,6,0.1)',
+  danger: '#E11D48', // Soft rose
+  dangerGlow: 'rgba(225,29,72,0.1)',
 
-  text: '#F1F5F9',
-  textSecondary: '#94A3B8',
-  textMuted: '#4B6285',
+  text: '#0F172A',
+  textSecondary: '#475569',
+  textMuted: '#64748B',
   textOnPrimary: '#FFFFFF',
 
-  statusCritical: '#EF4444',
-  statusWarning: '#F59E0B',
-  statusOk: '#3ECF8E',
+  statusCritical: '#E11D48',
+  statusWarning: '#D97706',
+  statusOk: '#16A34A',
 
-  severityUrgent: '#EF4444',
-  severityHigh: '#F97316',
-  severityMedium: '#F59E0B',
-  severityLow: '#3B82F6',
+  severityUrgent: '#E11D48',
+  severityHigh: '#EA580C',
+  severityMedium: '#D97706',
+  severityLow: '#2563EB',
 
-  taken: '#3ECF8E',
-  missed: '#EF4444',
-  partial: '#F59E0B',
-  na: '#2E3E60',
+  taken: '#16A34A',
+  missed: '#E11D48',
+  partial: '#D97706',
+  na: '#E2E8F0',
 };
+

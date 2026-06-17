@@ -2,18 +2,40 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { callsApi } from '../api/api';
 import { Colors } from '../constants/theme';
+import {
+  ArrowLeft,
+  CheckCircle2,
+  XCircle,
+  Clock,
+  AlertTriangle,
+  Smile,
+  Meh,
+  Frown,
+  FileText,
+  Zap,
+  Pill,
+  Utensils,
+  Sunrise,
+  Sun,
+  Moon,
+  AlertCircle,
+  Volume2,
+  Bot,
+  User,
+  Minus
+} from 'lucide-react';
 
 function MedBadge({ status }: { status: string }) {
   const map: any = {
-    taken:  { color: Colors.success, bg: Colors.successGlow, icon: '✅', label: 'Taken' },
-    missed: { color: Colors.danger,  bg: Colors.dangerGlow,  icon: '❌', label: 'Missed' },
-    na:     { color: '#4B6285', bg: '#1E2C45',    icon: '—',  label: 'N/A' },
+    taken:  { color: Colors.success, bg: Colors.successGlow, icon: <CheckCircle2 size={12} />, label: 'Taken' },
+    missed: { color: Colors.danger,  bg: Colors.dangerGlow,  icon: <XCircle size={12} />, label: 'Missed' },
+    na:     { color: 'var(--text-muted)', bg: '#F1F5F9',    icon: <Minus size={12} />,  label: 'N/A' },
   };
   const s = map[status] || map.na;
   return (
     <div className="med-badge-inline" style={{ backgroundColor: s.bg, borderColor: s.color }}>
-      <span style={{ fontSize: 12 }}>{s.icon}</span>
-      <span style={{ color: s.color }}>{s.label}</span>
+      <span style={{ display: 'flex', alignItems: 'center' }}>{s.icon}</span>
+      <span style={{ color: s.color, marginLeft: 4 }}>{s.label}</span>
     </div>
   );
 }
@@ -38,12 +60,21 @@ export default function CallDetail() {
   const analysis = call.llm_analysis;
   const turns = call.raw_transcript?.turns || [];
   const duration = call.duration_seconds ? `${Math.floor(call.duration_seconds / 60)}m ${call.duration_seconds % 60}s` : 'N/A';
-  const moodIcon: any = { positive: '😊', neutral: '😐', low: '😟', distressed: '😰' };
+  
+  const moodIcons: Record<string, React.ReactNode> = {
+    positive: <Smile size={22} style={{ color: Colors.success }} />,
+    neutral: <Meh size={22} style={{ color: 'var(--text-secondary)' }} />,
+    low: <Frown size={22} style={{ color: Colors.warning }} />,
+    distressed: <AlertTriangle size={22} style={{ color: Colors.danger }} />
+  };
+
   const scoreColor = analysis?.compliance_score >= 80 ? Colors.success : analysis?.compliance_score >= 50 ? Colors.warning : Colors.danger;
 
   return (
     <div>
-      <button className="back-btn" onClick={() => navigate(-1)}>← Back</button>
+      <button className="back-btn" onClick={() => navigate(-1)} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+        <ArrowLeft size={14} /> Back
+      </button>
 
       <div className="page-header">
         <div>
@@ -56,10 +87,29 @@ export default function CallDetail() {
 
       {/* Meta strip */}
       <div className="call-meta-strip">
-        <div className="call-meta-card"><div className="call-meta-num">{duration}</div><div className="call-meta-label">Duration</div></div>
-        <div className="call-meta-card"><div className="call-meta-num" style={{ color: scoreColor }}>{analysis?.compliance_score ?? '—'}%</div><div className="call-meta-label">Compliance Score</div></div>
-        <div className="call-meta-card"><div className="call-meta-num">{moodIcon[analysis?.mood] || '—'}</div><div className="call-meta-label">Mood</div></div>
-        <div className="call-meta-card"><div className="call-meta-num">{analysis?.distress_flag ? '🚨' : '✅'}</div><div className="call-meta-label">Distress Flag</div></div>
+        <div className="call-meta-card">
+          <div className="call-meta-num">{duration}</div>
+          <div className="call-meta-label">Duration</div>
+        </div>
+        <div className="call-meta-card">
+          <div className="call-meta-num" style={{ color: scoreColor }}>{analysis?.compliance_score ?? '—'}%</div>
+          <div className="call-meta-label">Compliance Score</div>
+        </div>
+        <div className="call-meta-card">
+          <div className="call-meta-num" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            {moodIcons[analysis?.mood] || '—'}
+          </div>
+          <div className="call-meta-label">Mood</div>
+        </div>
+        <div className="call-meta-card">
+          <div className="call-meta-num" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            {analysis?.distress_flag
+              ? <AlertTriangle size={20} style={{ color: Colors.danger }} />
+              : <CheckCircle2 size={20} style={{ color: Colors.success }} />
+            }
+          </div>
+          <div className="call-meta-label">Distress status</div>
+        </div>
       </div>
 
       <div className="call-detail-layout">
@@ -67,11 +117,15 @@ export default function CallDetail() {
         <div>
           {analysis?.summary && (
             <div className="detail-section">
-              <div style={{ fontSize: 14, fontWeight: 700, color: '#F1F5F9', marginBottom: 12 }}>📋 AI Summary</div>
+              <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 12, display: 'flex', alignItems: 'center', gap: 8 }}>
+                <FileText size={16} style={{ color: 'var(--accent-teal)' }} /> AI Summary
+              </div>
               <div className="summary-card">
                 <div className="summary-text">{analysis.summary}</div>
                 {analysis._source === 'keyword_fallback' && (
-                  <div className="fallback-note">⚡ Keyword analysis (Gemini quota exceeded)</div>
+                  <div className="fallback-note" style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                    <Zap size={12} style={{ color: 'var(--accent-amber)' }} /> Keyword analysis (Gemini quota exceeded)
+                  </div>
                 )}
               </div>
             </div>
@@ -79,14 +133,16 @@ export default function CallDetail() {
 
           {analysis?.medications?.length > 0 && (
             <div className="detail-section">
-              <div style={{ fontSize: 14, fontWeight: 700, color: '#F1F5F9', marginBottom: 12 }}>💊 Medications</div>
+              <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 12, display: 'flex', alignItems: 'center', gap: 8 }}>
+                <Pill size={16} style={{ color: 'var(--accent-teal)' }} /> Medications Checked
+              </div>
               <div className="detail-card">
                 {analysis.medications.map((med: any, i: number) => (
-                  <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 16px', borderBottom: '1px solid #1E2C45' }}>
-                    <span style={{ fontSize: 18 }}>💊</span>
+                  <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 16px', borderBottom: '1px solid var(--border-color)' }}>
+                    <span style={{ display: 'flex', alignItems: 'center', color: 'var(--accent-teal)' }}><Pill size={18} /></span>
                     <div style={{ flex: 1 }}>
-                      <div style={{ fontSize: 14, color: '#F1F5F9', fontWeight: 600 }}>{med.name}</div>
-                      <div style={{ fontSize: 12, color: '#4B6285', marginTop: 2 }}>{med.scheduled_time?.slice(0, 5)}</div>
+                      <div style={{ fontSize: 14, color: 'var(--text-primary)', fontWeight: 600 }}>{med.name}</div>
+                      <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 2 }}>{med.scheduled_time?.slice(0, 5)}</div>
                     </div>
                     <MedBadge status={med.status} />
                   </div>
@@ -97,16 +153,18 @@ export default function CallDetail() {
 
           {analysis?.meals && (
             <div className="detail-section">
-              <div style={{ fontSize: 14, fontWeight: 700, color: '#F1F5F9', marginBottom: 12 }}>🍽️ Meals</div>
+              <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 12, display: 'flex', alignItems: 'center', gap: 8 }}>
+                <Utensils size={16} style={{ color: 'var(--accent-teal)' }} /> Meals Status
+              </div>
               <div className="detail-card">
                 {Object.entries(analysis.meals).map(([meal, status]) => {
                   const s = status as string;
-                  const mealIcon = meal === 'breakfast' ? '🌅' : meal === 'lunch' ? '☀️' : '🌙';
-                  const statusColor = s === 'eaten' ? Colors.success : s === 'skipped' ? Colors.danger : s === 'partial' ? Colors.warning : '#4B6285';
+                  const mealIcon = meal === 'breakfast' ? <Sunrise size={18} style={{ color: 'var(--accent-amber)' }} /> : meal === 'lunch' ? <Sun size={18} style={{ color: 'var(--accent-teal)' }} /> : <Moon size={18} style={{ color: 'var(--accent-lavender)' }} />;
+                  const statusColor = s === 'eaten' ? Colors.success : s === 'skipped' ? Colors.danger : s === 'partial' ? Colors.warning : 'var(--text-muted)';
                   return (
-                    <div key={meal} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 16px', borderBottom: '1px solid #1E2C45' }}>
-                      <span style={{ fontSize: 18 }}>{mealIcon}</span>
-                      <span style={{ flex: 1, fontSize: 14, color: '#F1F5F9', fontWeight: 500 }}>{meal.charAt(0).toUpperCase() + meal.slice(1)}</span>
+                    <div key={meal} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 16px', borderBottom: '1px solid var(--border-color)' }}>
+                      <span style={{ display: 'flex', alignItems: 'center' }}>{mealIcon}</span>
+                      <span style={{ flex: 1, fontSize: 14, color: 'var(--text-primary)', fontWeight: 500 }}>{meal.charAt(0).toUpperCase() + meal.slice(1)}</span>
                       <span style={{ fontSize: 13, fontWeight: 600, color: statusColor }}>{s === 'na' ? 'N/A' : s.charAt(0).toUpperCase() + s.slice(1)}</span>
                     </div>
                   );
@@ -117,11 +175,13 @@ export default function CallDetail() {
 
           {analysis?.raw_concerns?.length > 0 && (
             <div className="detail-section">
-              <div style={{ fontSize: 14, fontWeight: 700, color: '#F1F5F9', marginBottom: 12 }}>⚠️ Concerns Noted</div>
+              <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 12, display: 'flex', alignItems: 'center', gap: 8 }}>
+                <AlertCircle size={16} style={{ color: 'var(--accent-teal)' }} /> Concerns Noted
+              </div>
               <div className="summary-card">
                 {analysis.raw_concerns.map((c: string, i: number) => (
                   <div key={i} className="concern-detail-row">
-                    <span className="concern-dot">•</span>
+                    <span className="concern-dot" style={{ color: 'var(--accent-amber)', fontSize: 16 }}>•</span>
                     <span className="concern-detail-text">{c}</span>
                   </div>
                 ))}
@@ -132,28 +192,30 @@ export default function CallDetail() {
 
         {/* Right column — Transcript */}
         <div>
-          <div style={{ fontSize: 14, fontWeight: 700, color: '#F1F5F9', marginBottom: 12 }}>🎙️ Call Transcript</div>
+          <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 12, display: 'flex', alignItems: 'center', gap: 8 }}>
+            <Volume2 size={16} style={{ color: 'var(--accent-teal)' }} /> Call Transcript
+          </div>
           {turns.length > 0 ? (
             <div className="transcript-card">
               {turns.map((turn: any, i: number) => {
                 const isElder = turn.speaker === 'ELDER';
                 return (
                   <div key={i} className={`turn-row${isElder ? ' elder-row' : ''}`}>
-                    {!isElder && <span className="speaker-icon">🤖</span>}
+                    {!isElder && <span className="speaker-icon" style={{ color: 'var(--accent-teal)' }}><Bot size={18} /></span>}
                     <div className={`bubble ${isElder ? 'elder-bubble' : 'ai-bubble'}`}>
                       <div className={`bubble-speaker${isElder ? ' elder-color' : ''}`}>
-                        {isElder ? '👴 Elder' : 'AI Assistant'}
+                        {isElder ? 'Elder' : 'AI Assistant'}
                       </div>
                       <div className={`bubble-text${isElder ? ' elder-text' : ''}`}>{turn.text}</div>
                     </div>
-                    {isElder && <span className="speaker-icon">👴</span>}
+                    {isElder && <span className="speaker-icon" style={{ color: 'var(--accent-teal)' }}><User size={18} /></span>}
                   </div>
                 );
               })}
             </div>
           ) : (
             <div className="summary-card">
-              <div style={{ color: '#4B6285', fontSize: 14, textAlign: 'center', padding: '20px 0' }}>No transcript available for this call</div>
+              <div style={{ color: 'var(--text-muted)', fontSize: 14, textAlign: 'center', padding: '20px 0' }}>No transcript available for this call</div>
             </div>
           )}
         </div>

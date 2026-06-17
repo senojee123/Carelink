@@ -1,11 +1,12 @@
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { LayoutDashboard, Bell, TrendingUp, Settings, Plus, LogOut, HeartHandshake } from 'lucide-react';
 
 const TABS = [
-  { to: '/', icon: '🏠', label: 'Dashboard', end: true },
-  { to: '/alerts', icon: '🔔', label: 'Alerts', end: false },
-  { to: '/insights', icon: '🧠', label: 'Insights', end: false },
-  { to: '/settings', icon: '⚙️', label: 'Settings', end: false },
+  { to: '/', icon: <LayoutDashboard size={18} />, label: 'Dashboard', end: true },
+  { to: '/alerts', icon: <Bell size={18} />, label: 'Alerts', end: false },
+  { to: '/insights', icon: <TrendingUp size={18} />, label: 'Insights', end: false },
+  { to: '/settings', icon: <Settings size={18} />, label: 'Settings', end: false },
 ];
 
 export default function TabLayout() {
@@ -24,7 +25,9 @@ export default function TabLayout() {
       {/* ── Sidebar ── */}
       <aside className="sidebar">
         <div className="sidebar-brand">
-          <div className="sidebar-logo">🏥</div>
+          <div className="sidebar-logo">
+            <HeartHandshake size={22} />
+          </div>
           <div>
             <div className="sidebar-brand-name">CareLink</div>
             <div className="sidebar-brand-sub">AI Elderly Care</div>
@@ -47,7 +50,7 @@ export default function TabLayout() {
 
           <div className="sidebar-section-label" style={{ marginTop: 8 }}>Quick Actions</div>
           <NavLink to="/elder/add" className="nav-link">
-            <span className="nav-link-icon">➕</span>
+            <span className="nav-link-icon"><Plus size={18} /></span>
             Add Elder
           </NavLink>
         </nav>
@@ -64,8 +67,24 @@ export default function TabLayout() {
             <button
               title="Sign out"
               onClick={handleLogout}
-              style={{ background: 'none', border: 'none', color: '#4B6285', fontSize: 16, cursor: 'pointer', padding: '4px', borderRadius: 6, flexShrink: 0 }}
-            >⎋</button>
+              style={{
+                background: 'none',
+                border: 'none',
+                color: '#64748B',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer',
+                padding: '6px',
+                borderRadius: '6px',
+                flexShrink: 0,
+                transition: 'background-color 0.15s'
+              }}
+              onMouseEnter={e => e.currentTarget.style.backgroundColor = '#F1F5F9'}
+              onMouseLeave={e => e.currentTarget.style.backgroundColor = 'transparent'}
+            >
+              <LogOut size={16} />
+            </button>
           </div>
         </div>
       </aside>

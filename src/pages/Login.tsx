@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import axios from 'axios';
 import { API_BASE_URL } from '../constants/config';
+import { HeartHandshake, Bot, LineChart, Bell, Mail, Lock } from 'lucide-react';
 
 const DEMO_USERS = [
   { name: 'Sarah Mitchell', email: 'sarah@carelink.com', role: '3 Elders' },
@@ -13,9 +14,9 @@ const DEMO_USERS = [
 ];
 
 const FEATURES = [
-  { icon: '🤖', title: 'AI-Powered Check-ins', desc: 'Gemini AI makes daily calls to your elders and analyses responses automatically' },
-  { icon: '📊', title: 'Real-time Insights', desc: 'Compliance scores, mood tracking, and medication adherence at a glance' },
-  { icon: '🚨', title: 'Instant Alerts', desc: 'Get notified immediately when something needs your attention' },
+  { icon: <Bot size={24} />, title: 'AI-Powered Check-ins', desc: 'Gemini AI makes daily calls to your elders and analyses responses automatically' },
+  { icon: <LineChart size={24} />, title: 'Real-time Insights', desc: 'Compliance scores, mood tracking, and medication adherence at a glance' },
+  { icon: <Bell size={24} />, title: 'Instant Alerts', desc: 'Get notified immediately when something needs your attention' },
 ];
 
 export default function Login() {
@@ -73,7 +74,9 @@ export default function Login() {
       {/* Left hero */}
       <div className="auth-hero">
         <div className="auth-hero-content">
-          <div className="auth-hero-logo">🏥</div>
+          <div className="auth-hero-logo">
+            <HeartHandshake size={44} />
+          </div>
           <div className="auth-hero-title">CareLink</div>
           <div className="auth-hero-sub">AI-powered elderly care platform — keep your loved ones safe with intelligent monitoring</div>
           <div className="auth-features">
@@ -94,7 +97,7 @@ export default function Login() {
           <div className="auth-form-sub">Sign in to your caregiver account</div>
 
           {backendStatus === 'slow' && !error && (
-            <div style={{ color: '#F59E0B', fontSize: 13, marginBottom: 12, padding: '8px 12px', background: 'rgba(245,158,11,0.08)', borderRadius: 8, border: '1px solid rgba(245,158,11,0.25)' }}>
+            <div style={{ color: '#D97706', fontSize: 13, marginBottom: 12, padding: '8px 12px', background: 'rgba(217,119,6,0.06)', borderRadius: 8, border: '1px solid rgba(217,119,6,0.15)' }}>
               ⏳ Backend is waking up (Render free tier)... first login may take ~30 seconds.
             </div>
           )}
@@ -104,14 +107,14 @@ export default function Login() {
             <div className="form-field">
               <label className="form-label">Email address</label>
               <div className="form-input-wrap">
-                <span className="form-input-icon">✉️</span>
+                <span className="form-input-icon"><Mail size={16} /></span>
                 <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="your@email.com" autoComplete="email" />
               </div>
             </div>
             <div className="form-field">
               <label className="form-label">Password</label>
               <div className="form-input-wrap">
-                <span className="form-input-icon">🔒</span>
+                <span className="form-input-icon"><Lock size={16} /></span>
                 <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="••••••••" autoComplete="current-password" />
               </div>
             </div>
@@ -146,7 +149,7 @@ export default function Login() {
             <button className="form-footer-link" onClick={() => navigate('/register')}>Create an account →</button>
           </div>
 
-          <p style={{ color: '#4B6285', fontSize: 12, textAlign: 'center', marginTop: 32 }}>
+          <p style={{ color: '#64748B', fontSize: 12, textAlign: 'center', marginTop: 32 }}>
             © 2026 CareLink · Powered by Gemini AI
           </p>
         </div>

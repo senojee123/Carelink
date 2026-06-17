@@ -2,6 +2,15 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { alertsApi } from '../api/api';
 import { Colors } from '../constants/theme';
+import {
+  Bell,
+  Check,
+  CheckCircle2,
+  AlertTriangle,
+  AlertCircle,
+  Info,
+  ChevronRight
+} from 'lucide-react';
 
 function formatTime(ts: string) {
   const diff = Date.now() - new Date(ts).getTime();
@@ -13,15 +22,15 @@ function formatTime(ts: string) {
   return mins > 0 ? `${mins}m ago` : 'Just now';
 }
 
-const SEVERITY_MAP: Record<string, { color: string; bg: string; border: string; icon: string }> = {
-  URGENT: { color: Colors.danger, bg: 'rgba(239,68,68,0.1)', border: 'rgba(239,68,68,0.3)', icon: '🚨' },
-  HIGH:   { color: '#F97316', bg: 'rgba(249,115,22,0.1)', border: 'rgba(249,115,22,0.3)', icon: '⚠️' },
-  MEDIUM: { color: Colors.warning, bg: 'rgba(245,158,11,0.1)', border: 'rgba(245,158,11,0.3)', icon: '🔔' },
-  LOW:    { color: Colors.primary, bg: 'rgba(78,142,255,0.1)', border: 'rgba(78,142,255,0.3)', icon: 'ℹ️' },
+const SEVERITY_MAP: Record<string, { color: string; bg: string; border: string; icon: React.ReactNode }> = {
+  URGENT: { color: Colors.danger, bg: 'var(--accent-rose-light)', border: 'rgba(225,29,72,0.15)', icon: <AlertTriangle size={12} /> },
+  HIGH:   { color: '#EA580C', bg: 'rgba(234,88,12,0.06)', border: 'rgba(234,88,12,0.15)', icon: <AlertCircle size={12} /> },
+  MEDIUM: { color: Colors.warning, bg: 'var(--accent-amber-light)', border: 'rgba(217,119,6,0.15)', icon: <Bell size={12} /> },
+  LOW:    { color: Colors.primary, bg: 'var(--accent-teal-light)', border: 'rgba(13,148,136,0.15)', icon: <Info size={12} /> },
 };
 
 function borderColor(sev: string) {
-  return sev === 'URGENT' ? Colors.danger : sev === 'HIGH' ? '#F97316' : sev === 'MEDIUM' ? Colors.warning : Colors.primary;
+  return sev === 'URGENT' ? Colors.danger : sev === 'HIGH' ? '#EA580C' : sev === 'MEDIUM' ? Colors.warning : Colors.primary;
 }
 
 export default function Alerts() {
@@ -61,12 +70,14 @@ export default function Alerts() {
     <div>
       <div className="page-header">
         <div>
-          <div className="page-title">🔔 Alert Inbox</div>
+          <div className="page-title" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <Bell size={26} style={{ color: 'var(--accent-teal)' }} /> Alert Inbox
+          </div>
           <div className="page-sub">{unreadCount} unread · {alerts.length} total alerts</div>
         </div>
         {unreadCount > 0 && (
-          <button className="btn-cancel" onClick={markAllRead} style={{ color: '#4E8EFF', borderColor: 'rgba(78,142,255,0.3)' }}>
-            ✓ Mark all read
+          <button className="btn-cancel" onClick={markAllRead} style={{ display: 'flex', alignItems: 'center', gap: 6, color: 'var(--accent-teal)', borderColor: 'var(--accent-teal-border)' }}>
+            <Check size={14} /> Mark all read
           </button>
         )}
       </div>
@@ -87,9 +98,9 @@ export default function Alerts() {
         <div className="loading-screen"><div className="spinner" /></div>
       ) : filtered.length === 0 ? (
         <div className="empty-state">
-          <div className="empty-icon">✅</div>
-          <div className="empty-title">No alerts</div>
-          <div className="empty-sub">All elders are doing well right now.</div>
+          <CheckCircle2 size={56} style={{ color: Colors.success, marginBottom: 20 }} />
+          <div className="empty-title">All clear</div>
+          <div className="empty-sub">No active alerts. All elders are doing well right now.</div>
         </div>
       ) : (
         <div className="alerts-table">
@@ -104,8 +115,8 @@ export default function Alerts() {
               >
                 <div className="alert-row-left">
                   <div className="severity-badge" style={{ backgroundColor: s.bg, borderColor: s.border }}>
-                    <span className="badge-icon">{s.icon}</span>
-                    <span className="badge-text" style={{ color: s.color }}>{alert.severity}</span>
+                    <span className="badge-icon" style={{ display: 'flex', alignItems: 'center' }}>{s.icon}</span>
+                    <span className="badge-text" style={{ color: s.color, marginLeft: 4 }}>{alert.severity}</span>
                   </div>
                   <span className="alert-time">{formatTime(alert.created_at)}</span>
                 </div>
@@ -120,7 +131,7 @@ export default function Alerts() {
 
                 <div className="alert-row-right">
                   {!alert.is_read && <div className="unread-dot" />}
-                  <span style={{ color: '#4B6285', fontSize: 18 }}>›</span>
+                  <span style={{ color: 'var(--text-muted)', display: 'flex', alignItems: 'center' }}><ChevronRight size={18} /></span>
                 </div>
               </div>
             );

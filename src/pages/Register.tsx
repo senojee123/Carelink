@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { HeartHandshake, ShieldCheck, Zap, User, Mail, Phone, Lock, LockKeyhole, Info } from 'lucide-react';
 
 export default function Register() {
   const { register } = useAuth();
@@ -32,20 +33,22 @@ export default function Register() {
       {/* Hero */}
       <div className="auth-hero">
         <div className="auth-hero-content">
-          <div className="auth-hero-logo">🏥</div>
+          <div className="auth-hero-logo">
+            <HeartHandshake size={44} />
+          </div>
           <div className="auth-hero-title">Join CareLink</div>
           <div className="auth-hero-sub">Create your caregiver account and start providing smarter, data-driven care for your elders.</div>
           <div className="auth-features">
             <div className="auth-feature-item">
-              <span className="auth-feature-icon">🆓</span>
+              <span className="auth-feature-icon"><Info size={22} /></span>
               <div className="auth-feature-text"><strong>Free to start</strong><br />Add up to 5 elders with full AI monitoring</div>
             </div>
             <div className="auth-feature-item">
-              <span className="auth-feature-icon">🔒</span>
-              <div className="auth-feature-text"><strong>Secure by design</strong><br />All data encrypted and stored in the cloud</div>
+              <span className="auth-feature-icon"><ShieldCheck size={22} /></span>
+              <div className="auth-feature-text"><strong>Secure by design</strong><br />All data encrypted and stored securely</div>
             </div>
             <div className="auth-feature-item">
-              <span className="auth-feature-icon">⚡</span>
+              <span className="auth-feature-icon"><Zap size={22} /></span>
               <div className="auth-feature-text"><strong>Up in minutes</strong><br />Add your first elder in under 2 minutes</div>
             </div>
           </div>
@@ -64,35 +67,35 @@ export default function Register() {
             <div className="form-field">
               <label className="form-label">Full Name *</label>
               <div className="form-input-wrap">
-                <span className="form-input-icon">👤</span>
+                <span className="form-input-icon"><User size={16} /></span>
                 <input type="text" value={form.name} onChange={e => update('name', e.target.value)} placeholder="e.g. Sarah Mitchell" autoComplete="name" />
               </div>
             </div>
             <div className="form-field">
               <label className="form-label">Email Address *</label>
               <div className="form-input-wrap">
-                <span className="form-input-icon">✉️</span>
+                <span className="form-input-icon"><Mail size={16} /></span>
                 <input type="email" value={form.email} onChange={e => update('email', e.target.value)} placeholder="your@email.com" autoComplete="email" />
               </div>
             </div>
             <div className="form-field">
               <label className="form-label">Phone (optional)</label>
               <div className="form-input-wrap">
-                <span className="form-input-icon">📱</span>
+                <span className="form-input-icon"><Phone size={16} /></span>
                 <input type="tel" value={form.phone} onChange={e => update('phone', e.target.value)} placeholder="+1-555-0100" />
               </div>
             </div>
             <div className="form-field">
               <label className="form-label">Password *</label>
               <div className="form-input-wrap">
-                <span className="form-input-icon">🔒</span>
+                <span className="form-input-icon"><Lock size={16} /></span>
                 <input type="password" value={form.password} onChange={e => update('password', e.target.value)} placeholder="••••••••" autoComplete="new-password" />
               </div>
             </div>
             <div className="form-field">
               <label className="form-label">Confirm Password *</label>
               <div className="form-input-wrap">
-                <span className="form-input-icon">🔐</span>
+                <span className="form-input-icon"><LockKeyhole size={16} /></span>
                 <input type="password" value={form.confirmPassword} onChange={e => update('confirmPassword', e.target.value)} placeholder="••••••••" />
               </div>
             </div>

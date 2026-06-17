@@ -2,15 +2,33 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { schedulesApi, eldersApi } from '../api/api';
 import { Colors } from '../constants/theme';
+import {
+  ArrowLeft,
+  Calendar,
+  Pill,
+  Utensils,
+  Activity,
+  Plus,
+  Edit,
+  Trash2,
+  Clock,
+  ChevronLeft
+} from 'lucide-react';
 
 const TIME_OPTIONS = ['07:00','08:00','08:30','09:00','10:00','12:00','12:30','13:00','14:00','16:00','18:00','18:30','19:00','20:00','21:00','22:00'];
 const RECURRENCES = ['daily', 'weekdays', 'weekends', 'weekly', 'once'];
+
 const TYPES = [
-  { key: 'medication', label: 'Medication', icon: '💊' },
-  { key: 'meal', label: 'Meal', icon: '🍽️' },
-  { key: 'activity', label: 'Activity', icon: '🏃' },
+  { key: 'medication', label: 'Medication', icon: <Pill size={18} /> },
+  { key: 'meal', label: 'Meal', icon: <Utensils size={18} /> },
+  { key: 'activity', label: 'Activity', icon: <Activity size={18} /> },
 ];
-const ICONS: any = { medication: '💊', meal: '🍽️', activity: '🏃' };
+
+const ICONS: Record<string, React.ReactNode> = {
+  medication: <Pill size={18} style={{ color: 'var(--accent-teal)' }} />,
+  meal: <Utensils size={18} style={{ color: 'var(--accent-lavender)' }} />,
+  activity: <Activity size={18} style={{ color: 'var(--accent-blue)' }} />
+};
 
 function ScheduleForm({ initial, onSubmit, submitLabel }: any) {
   const [type, setType] = useState(initial?.type || 'medication');
@@ -33,17 +51,27 @@ function ScheduleForm({ initial, onSubmit, submitLabel }: any) {
       <div className="field-group">
         <label className="field-label">Type</label>
         <div style={{ display: 'flex', gap: 8 }}>
-          {TYPES.map(t => (
-            <button key={t.key} type="button" onClick={() => setType(t.key)} style={{
-              flex: 1, background: type === t.key ? Colors.primaryGlow : '#0D1526',
-              border: `1px solid ${type === t.key ? Colors.primary : '#1E2C45'}`,
-              borderRadius: 10, padding: '10px 6px', cursor: 'pointer',
-              display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4,
-            }}>
-              <span style={{ fontSize: 20 }}>{t.icon}</span>
-              <span style={{ fontSize: 11, color: type === t.key ? Colors.primary : '#94A3B8', fontWeight: 600 }}>{t.label}</span>
-            </button>
-          ))}
+          {TYPES.map(t => {
+            const isSelected = type === t.key;
+            return (
+              <button
+                key={t.key}
+                type="button"
+                onClick={() => setType(t.key)}
+                style={{
+                  flex: 1,
+                  background: isSelected ? 'var(--accent-teal-light)' : 'var(--bg-secondary)',
+                  border: `1px solid ${isSelected ? 'var(--accent-teal)' : 'var(--border-color)'}`,
+                  color: isSelected ? 'var(--accent-teal)' : 'var(--text-secondary)',
+                  borderRadius: 10, padding: '10px 6px', cursor: 'pointer',
+                  display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6,
+                }}
+              >
+                <span style={{ display: 'flex', alignItems: 'center' }}>{t.icon}</span>
+                <span style={{ fontSize: 11, fontWeight: 600 }}>{t.label}</span>
+              </button>
+            );
+          })}
         </div>
       </div>
 
@@ -55,28 +83,50 @@ function ScheduleForm({ initial, onSubmit, submitLabel }: any) {
       <div className="field-group">
         <label className="field-label">Time</label>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
-          {TIME_OPTIONS.map(t => (
-            <button key={t} type="button" onClick={() => setTime(t)} style={{
-              background: time === t ? Colors.primaryGlow : '#0D1526',
-              border: `1px solid ${time === t ? Colors.primary : '#1E2C45'}`,
-              borderRadius: 8, padding: '6px 10px', cursor: 'pointer',
-              color: time === t ? Colors.primary : '#94A3B8', fontSize: 12, fontWeight: time === t ? 700 : 500,
-            }}>{t}</button>
-          ))}
+          {TIME_OPTIONS.map(t => {
+            const isSelected = time === t;
+            return (
+              <button
+                key={t}
+                type="button"
+                onClick={() => setTime(t)}
+                style={{
+                  background: isSelected ? 'var(--accent-teal-light)' : 'var(--bg-secondary)',
+                  border: `1px solid ${isSelected ? 'var(--accent-teal)' : 'var(--border-color)'}`,
+                  color: isSelected ? 'var(--accent-teal)' : 'var(--text-secondary)',
+                  borderRadius: 8, padding: '6px 10px', cursor: 'pointer',
+                  fontSize: 12, fontWeight: isSelected ? 700 : 500,
+                }}
+              >
+                {t}
+              </button>
+            );
+          })}
         </div>
       </div>
 
       <div className="field-group">
         <label className="field-label">Recurrence</label>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
-          {RECURRENCES.map(r => (
-            <button key={r} type="button" onClick={() => setRecurrence(r)} style={{
-              background: recurrence === r ? Colors.primaryGlow : '#0D1526',
-              border: `1px solid ${recurrence === r ? Colors.primary : '#1E2C45'}`,
-              borderRadius: 16, padding: '6px 14px', cursor: 'pointer',
-              color: recurrence === r ? Colors.primary : '#94A3B8', fontSize: 12, fontWeight: 500,
-            }}>{r}</button>
-          ))}
+          {RECURRENCES.map(r => {
+            const isSelected = recurrence === r;
+            return (
+              <button
+                key={r}
+                type="button"
+                onClick={() => setRecurrence(r)}
+                style={{
+                  background: isSelected ? 'var(--accent-teal-light)' : 'var(--bg-secondary)',
+                  border: `1px solid ${isSelected ? 'var(--accent-teal)' : 'var(--border-color)'}`,
+                  color: isSelected ? 'var(--accent-teal)' : 'var(--text-secondary)',
+                  borderRadius: 16, padding: '6px 14px', cursor: 'pointer',
+                  fontSize: 12, fontWeight: 500,
+                }}
+              >
+                {r}
+              </button>
+            );
+          })}
         </div>
       </div>
 
@@ -124,11 +174,15 @@ export default function ElderScheduler() {
 
   return (
     <div>
-      <button className="back-btn" onClick={() => navigate(-1)}>← Back</button>
+      <button className="back-btn" onClick={() => navigate(-1)} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+        <ArrowLeft size={14} /> Back
+      </button>
 
       <div className="page-header">
         <div>
-          <div className="page-title">📅 Schedule Manager</div>
+          <div className="page-title" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <Calendar size={26} style={{ color: 'var(--accent-teal)' }} /> Schedule Manager
+          </div>
           <div className="page-sub">{elderName}</div>
         </div>
       </div>
@@ -141,19 +195,25 @@ export default function ElderScheduler() {
           <div>
             {Object.entries(grouped).filter(([, items]: any) => items.length > 0).map(([type, items]: any) => (
               <div key={type} style={{ marginBottom: 24 }}>
-                <div style={{ fontSize: 15, fontWeight: 700, color: '#F1F5F9', marginBottom: 10 }}>
+                <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 10, display: 'flex', alignItems: 'center', gap: 8 }}>
                   {ICONS[type]} {type.charAt(0).toUpperCase() + type.slice(1)}s
                 </div>
                 {items.map((s: any) => (
                   <div key={s.id} className="schedule-item-card">
-                    <span style={{ fontSize: 20 }}>{ICONS[s.type]}</span>
+                    <span style={{ display: 'flex', alignItems: 'center' }}>{ICONS[s.type]}</span>
                     <div style={{ flex: 1 }}>
-                      <div style={{ fontSize: 14, color: '#F1F5F9', fontWeight: 600 }}>{s.label}</div>
-                      <div style={{ fontSize: 12, color: '#94A3B8', marginTop: 2 }}>{s.recurrence} · {s.scheduled_time?.slice(0, 5)}</div>
-                      {s.notes && <div style={{ fontSize: 12, color: '#4B6285', marginTop: 2 }}>{s.notes}</div>}
+                      <div style={{ fontSize: 14, color: 'var(--text-primary)', fontWeight: 600 }}>{s.label}</div>
+                      <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginTop: 2 }}>{s.recurrence} · {s.scheduled_time?.slice(0, 5)}</div>
+                      {s.notes && <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 2 }}>{s.notes}</div>}
                     </div>
                     <button className="schedule-edit-btn" onClick={() => { setEditSchedule(s); setAddMode(false); }}>Edit</button>
-                    <button className="schedule-del-btn" onClick={() => deleteSchedule(s.id, s.label)}>✕</button>
+                    <button
+                      className="schedule-del-btn"
+                      onClick={() => deleteSchedule(s.id, s.label)}
+                      style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '6px' }}
+                    >
+                      <Trash2 size={14} />
+                    </button>
                   </div>
                 ))}
               </div>
@@ -161,7 +221,7 @@ export default function ElderScheduler() {
 
             {schedules.length === 0 && (
               <div className="empty-state" style={{ paddingTop: 60 }}>
-                <div className="empty-icon">📅</div>
+                <Calendar size={56} style={{ color: 'var(--text-muted)', marginBottom: 20 }} />
                 <div className="empty-title">No schedules yet</div>
                 <div className="empty-sub">Use the form on the right to add medications, meals and activities.</div>
               </div>
@@ -175,28 +235,36 @@ export default function ElderScheduler() {
                 onClick={() => setAddMode(true)}
                 style={{
                   flex: 1, padding: '9px', borderRadius: 8, border: '1px solid',
-                  borderColor: addMode ? Colors.primary : '#1E2C45',
-                  background: addMode ? Colors.primaryGlow : '#0D1526',
-                  color: addMode ? Colors.primary : '#94A3B8', fontWeight: 700, cursor: 'pointer', fontSize: 13,
+                  borderColor: addMode ? 'var(--accent-teal)' : 'var(--border-color)',
+                  background: addMode ? 'var(--accent-teal-light)' : 'var(--bg-secondary)',
+                  color: addMode ? 'var(--accent-teal)' : 'var(--text-secondary)',
+                  fontWeight: 600, cursor: 'pointer', fontSize: 13,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4
                 }}
-              >+ Add New</button>
+              >
+                <Plus size={14} /> Add New
+              </button>
               {editSchedule && (
                 <button
                   onClick={() => setAddMode(false)}
                   style={{
                     flex: 1, padding: '9px', borderRadius: 8, border: '1px solid',
-                    borderColor: !addMode ? Colors.primary : '#1E2C45',
-                    background: !addMode ? Colors.primaryGlow : '#0D1526',
-                    color: !addMode ? Colors.primary : '#94A3B8', fontWeight: 700, cursor: 'pointer', fontSize: 13,
+                    borderColor: !addMode ? 'var(--accent-teal)' : 'var(--border-color)',
+                    background: !addMode ? 'var(--accent-teal-light)' : 'var(--bg-secondary)',
+                    color: !addMode ? 'var(--accent-teal)' : 'var(--text-secondary)',
+                    fontWeight: 600, cursor: 'pointer', fontSize: 13,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4
                   }}
-                >✏️ Edit</button>
+                >
+                  <Edit size={14} /> Edit
+                </button>
               )}
             </div>
 
             {addMode ? (
               <ScheduleForm
                 key="add"
-                submitLabel="+ Add to Schedule"
+                submitLabel="Add to Schedule"
                 onSubmit={async (data: any) => {
                   await schedulesApi.create({ elder_id: elderId, ...data });
                   loadData();
@@ -206,7 +274,7 @@ export default function ElderScheduler() {
               <ScheduleForm
                 key={editSchedule.id}
                 initial={editSchedule}
-                submitLabel="✓ Save Changes"
+                submitLabel="Save Changes"
                 onSubmit={async (data: any) => {
                   await schedulesApi.update(editSchedule.id, data);
                   setEditSchedule(null);

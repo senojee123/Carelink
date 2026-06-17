@@ -3,6 +3,27 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { eldersApi, callsApi } from '../api/api';
 import { Colors } from '../constants/theme';
+import {
+  HeartHandshake,
+  CheckCircle2,
+  AlertCircle,
+  AlertTriangle,
+  Phone,
+  Eye,
+  Bot,
+  Calendar,
+  Edit,
+  Smile,
+  Frown,
+  Meh,
+  XCircle,
+  Bell,
+  Plus,
+  Users,
+  PhoneCall,
+  Search,
+  MoreVertical
+} from 'lucide-react';
 
 function formatRelativeTime(timestamp: string) {
   const diff = Date.now() - new Date(timestamp).getTime();
@@ -23,16 +44,22 @@ function getStatusColor(status: string) {
   return status === 'critical' ? Colors.statusCritical : status === 'warning' ? Colors.statusWarning : Colors.statusOk;
 }
 
+function getStatusIcon(status: string, size = 16) {
+  if (status === 'critical') return <AlertTriangle size={size} style={{ color: Colors.statusCritical }} />;
+  if (status === 'warning') return <AlertCircle size={size} style={{ color: Colors.statusWarning }} />;
+  return <CheckCircle2 size={size} style={{ color: Colors.statusOk }} />;
+}
+
 function ElderCard({ elder, onMenu }: { elder: any; onMenu: (e: any) => void }) {
   const navigate = useNavigate();
   const statusColor = getStatusColor(elder.status);
-  const statusGlow = elder.status === 'critical' ? 'rgba(239,68,68,0.1)' : elder.status === 'warning' ? 'rgba(245,158,11,0.1)' : 'rgba(62,207,142,0.1)';
+  const statusGlow = elder.status === 'critical' ? 'rgba(225,29,72,0.06)' : elder.status === 'warning' ? 'rgba(217,119,6,0.06)' : 'rgba(22,163,74,0.06)';
   const compliance = elder.last_compliance_score ?? null;
 
   return (
     <div
       className="elder-card"
-      style={{ borderColor: elder.status !== 'ok' ? statusColor : '#1E2C45' }}
+      style={{ borderColor: elder.status !== 'ok' ? statusColor : '#E2E8F0' }}
       onClick={() => navigate(`/elder/${elder.id}`)}
     >
       <div className="elder-card-top">
@@ -54,11 +81,11 @@ function ElderCard({ elder, onMenu }: { elder: any; onMenu: (e: any) => void }) 
       </div>
 
       <div className="status-pill" style={{ backgroundColor: statusGlow }}>
-        <div className="status-dot" style={{ backgroundColor: statusColor }} />
-        <span style={{ color: statusColor, fontSize: 11, fontWeight: 700, letterSpacing: '0.3px' }}>
-          {elder.status === 'critical' ? '⚠️ Needs Immediate Attention'
-            : elder.status === 'warning' ? '🔔 Needs Attention'
-            : '✅ Doing Well'}
+        {getStatusIcon(elder.status, 14)}
+        <span style={{ color: statusColor, fontSize: 11, fontWeight: 700, letterSpacing: '0.3px', marginLeft: 4 }}>
+          {elder.status === 'critical' ? 'Needs Immediate Attention'
+            : elder.status === 'warning' ? 'Needs Attention'
+            : 'Doing Well'}
         </span>
       </div>
 
@@ -80,10 +107,15 @@ function ElderCard({ elder, onMenu }: { elder: any; onMenu: (e: any) => void }) 
       )}
 
       <div className="elder-card-footer">
-        <span>{elder.last_call_at ? `📞 ${formatRelativeTime(elder.last_call_at)}` : '📞 No calls yet'}</span>
+        <span>
+          <Phone size={12} style={{ color: Colors.textMuted }} />
+          {elder.last_call_at ? formatRelativeTime(elder.last_call_at) : 'No calls yet'}
+        </span>
         <div className="elder-card-actions" onClick={e => e.stopPropagation()}>
           <button className="card-action-btn" onClick={() => navigate(`/elder/edit/${elder.id}`)}>Edit</button>
-          <button className="card-action-btn" onClick={e => { e.stopPropagation(); onMenu(elder); }}>···</button>
+          <button className="card-action-btn" onClick={e => { e.stopPropagation(); onMenu(elder); }} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '6px' }}>
+            <MoreVertical size={14} />
+          </button>
         </div>
       </div>
 
@@ -91,7 +123,10 @@ function ElderCard({ elder, onMenu }: { elder: any; onMenu: (e: any) => void }) 
         className="elder-card-menu"
         onClick={e => { e.stopPropagation(); onMenu(elder); }}
         title="Options"
-      >···</button>
+        style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '6px' }}
+      >
+        <MoreVertical size={16} />
+      </button>
     </div>
   );
 }
@@ -100,10 +135,10 @@ function ElderMenuModal({ elder, onClose, onSimulate }: { elder: any; onClose: (
   if (!elder) return null;
   const navigate = useNavigate();
   const items = [
-    { icon: '👁️', label: 'View Full Details', action: () => { onClose(); navigate(`/elder/${elder.id}`); } },
-    { icon: '🤖', label: 'Simulate AI Check-in Call', action: () => { onClose(); onSimulate(elder); } },
-    { icon: '📅', label: 'Manage Schedule', action: () => { onClose(); navigate(`/elder/scheduler/${elder.id}`); } },
-    { icon: '✏️', label: 'Edit Profile', action: () => { onClose(); navigate(`/elder/edit/${elder.id}`); } },
+    { icon: <Eye size={16} />, label: 'View Full Details', action: () => { onClose(); navigate(`/elder/${elder.id}`); } },
+    { icon: <Bot size={16} />, label: 'Simulate AI Check-in Call', action: () => { onClose(); onSimulate(elder); } },
+    { icon: <Calendar size={16} />, label: 'Manage Schedule', action: () => { onClose(); navigate(`/elder/scheduler/${elder.id}`); } },
+    { icon: <Edit size={16} />, label: 'Edit Profile', action: () => { onClose(); navigate(`/elder/edit/${elder.id}`); } },
   ];
   return (
     <div className="modal-backdrop" onClick={onClose}>
@@ -130,35 +165,41 @@ function SimulateModal({ elder, onClose, onDone }: { elder: any; onClose: () => 
   if (!elder) return null;
 
   const scenarios = [
-    { key: 'positive', label: '😊 Positive check-in', desc: 'All meds taken, good mood' },
-    { key: 'concerned', label: '😟 Missed medications', desc: 'Skipped meds, low mood' },
-    { key: 'urgent', label: '🚨 Urgent distress', desc: 'Chest pain, needs help' },
-    { key: 'mixed', label: '😐 Mixed result', desc: 'Some meds, feels lonely' },
+    { key: 'positive', icon: <Smile size={16} style={{ color: Colors.success }} />, label: 'Positive check-in', desc: 'All meds taken, good mood' },
+    { key: 'concerned', icon: <Frown size={16} style={{ color: Colors.warning }} />, label: 'Missed medications', desc: 'Skipped meds, low mood' },
+    { key: 'urgent', icon: <AlertTriangle size={16} style={{ color: Colors.danger }} />, label: 'Urgent distress', desc: 'Chest pain, needs help' },
+    { key: 'mixed', icon: <Meh size={16} style={{ color: Colors.textMuted }} />, label: 'Mixed result', desc: 'Some meds, feels lonely' },
   ];
 
   async function runSimulation() {
     setLoading(true);
     try {
       await callsApi.simulate(elder.id, selected);
-      setResult('✅ Simulation complete! Gemini AI is analysing the transcript. Refresh in a moment to see results.');
+      setResult('Simulation complete! Gemini AI is analysing the transcript. Refresh in a moment to see results.');
       setTimeout(() => { onClose(); onDone(); }, 2500);
     } catch (err: any) {
-      setResult('❌ ' + (err?.response?.data?.error || 'Simulation failed. Please try again.'));
+      setResult('Error: ' + (err?.response?.data?.error || 'Simulation failed. Please try again.'));
     } finally {
       setLoading(false);
     }
   }
 
+  const isSuccessResult = result && !result.startsWith('Error');
+
   return (
     <div className="modal-backdrop" onClick={onClose}>
       <div className="modal-box" style={{ maxWidth: 460 }} onClick={e => e.stopPropagation()}>
-        <div className="modal-title">🤖 Simulate AI Check-in Call</div>
+        <div className="modal-title" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <Bot size={22} style={{ color: Colors.primary }} />
+          Simulate AI Check-in Call
+        </div>
         <div className="modal-sub">{elder.name} · {elder.elder_uid}</div>
         <div className="modal-divider" />
 
         {result ? (
-          <div style={{ color: result.startsWith('✅') ? Colors.success : Colors.danger, fontSize: 14, padding: '16px 0', lineHeight: 1.6 }}>
-            {result}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, color: isSuccessResult ? Colors.success : Colors.danger, fontSize: 14, padding: '16px 0', lineHeight: 1.6 }}>
+            {isSuccessResult ? <CheckCircle2 size={18} /> : <XCircle size={18} />}
+            <div>{result}</div>
           </div>
         ) : (
           <>
@@ -169,9 +210,12 @@ function SimulateModal({ elder, onClose, onDone }: { elder: any; onClose: () => 
                   className={`scenario-row${selected === s.key ? ' selected' : ''}`}
                   onClick={() => setSelected(s.key)}
                 >
-                  <div style={{ flex: 1 }}>
-                    <div className="scenario-label">{s.label}</div>
-                    <div className="scenario-desc">{s.desc}</div>
+                  <div style={{ display: 'flex', gap: 12, alignItems: 'flex-start' }}>
+                    <span style={{ marginTop: 2 }}>{s.icon}</span>
+                    <div>
+                      <div className="scenario-label">{s.label}</div>
+                      <div className="scenario-desc">{s.desc}</div>
+                    </div>
                   </div>
                   {selected === s.key && <span className="scenario-check">✓</span>}
                 </div>
@@ -180,7 +224,7 @@ function SimulateModal({ elder, onClose, onDone }: { elder: any; onClose: () => 
             <div className="modal-actions">
               <button className="btn-cancel" onClick={onClose}>Cancel</button>
               <button className="btn-confirm" onClick={runSimulation} disabled={loading}>
-                {loading ? <span className="spinner" style={{ width: 16, height: 16, borderWidth: 2 }} /> : '▶ Run Simulation'}
+                {loading ? <span className="spinner" style={{ width: 16, height: 16, borderWidth: 2 }} /> : 'Run Simulation'}
               </button>
             </div>
           </>
@@ -235,18 +279,18 @@ export default function Dashboard() {
       {/* ── Page header ── */}
       <div className="page-header">
         <div>
-          <div className="page-title">Good {getTimeOfDay()}, {caregiver?.name?.split(' ')[0]} 👋</div>
-          <div className="page-sub">Here's the latest status of all elders in your care</div>
+          <div className="page-title">Good {getTimeOfDay()}, {caregiver?.name?.split(' ')[0]}</div>
+          <div className="page-sub">Here's the latest wellbeing status of the elders in your family</div>
         </div>
         <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
           <Link to="/alerts" className="topbar-alert-btn" style={{ position: 'relative' }}>
-            🔔
+            <Bell size={18} />
             {(urgentCount + warningCount) > 0 && (
               <div className="topbar-badge">{urgentCount + warningCount}</div>
             )}
           </Link>
           <button className="topbar-add-btn" onClick={() => navigate('/elder/add')}>
-            ➕ Add Elder
+            <Plus size={16} /> Add Elder
           </button>
         </div>
       </div>
@@ -254,35 +298,45 @@ export default function Dashboard() {
       {/* ── Stats strip ── */}
       <div className="stats-row">
         <div className="stat-card">
-          <div className="stat-icon" style={{ background: 'rgba(78,142,255,0.12)' }}>👥</div>
+          <div className="stat-icon" style={{ background: 'var(--accent-teal-light)', color: 'var(--accent-teal)' }}>
+            <Users size={22} />
+          </div>
           <div>
             <div className="stat-num">{elders.length}</div>
             <div className="stat-label">Total Elders</div>
           </div>
         </div>
-        <div className="stat-card" style={{ borderColor: urgentCount > 0 ? 'rgba(239,68,68,0.4)' : '#1E2C45' }}>
-          <div className="stat-icon" style={{ background: 'rgba(239,68,68,0.12)' }}>🔴</div>
+        <div className="stat-card" style={{ borderColor: urgentCount > 0 ? 'rgba(225, 29, 72, 0.4)' : 'var(--border-color)' }}>
+          <div className="stat-icon" style={{ background: 'var(--accent-rose-light)', color: 'var(--accent-rose)' }}>
+            <AlertTriangle size={22} />
+          </div>
           <div>
-            <div className="stat-num" style={{ color: urgentCount > 0 ? Colors.danger : '#94A3B8' }}>{urgentCount}</div>
-            <div className="stat-label">Critical / Urgent</div>
+            <div className="stat-num" style={{ color: urgentCount > 0 ? Colors.danger : 'var(--text-muted)' }}>{urgentCount}</div>
+            <div className="stat-label">Urgent Care</div>
           </div>
         </div>
-        <div className="stat-card" style={{ borderColor: warningCount > 0 ? 'rgba(245,158,11,0.4)' : '#1E2C45' }}>
-          <div className="stat-icon" style={{ background: 'rgba(245,158,11,0.12)' }}>🟡</div>
+        <div className="stat-card" style={{ borderColor: warningCount > 0 ? 'rgba(217, 119, 6, 0.4)' : 'var(--border-color)' }}>
+          <div className="stat-icon" style={{ background: 'var(--accent-amber-light)', color: 'var(--accent-amber)' }}>
+            <AlertCircle size={22} />
+          </div>
           <div>
-            <div className="stat-num" style={{ color: warningCount > 0 ? Colors.warning : '#94A3B8' }}>{warningCount}</div>
+            <div className="stat-num" style={{ color: warningCount > 0 ? Colors.warning : 'var(--text-muted)' }}>{warningCount}</div>
             <div className="stat-label">Need Attention</div>
           </div>
         </div>
         <div className="stat-card">
-          <div className="stat-icon" style={{ background: 'rgba(62,207,142,0.12)' }}>✅</div>
+          <div className="stat-icon" style={{ background: 'var(--accent-green-light)', color: 'var(--accent-green)' }}>
+            <CheckCircle2 size={22} />
+          </div>
           <div>
             <div className="stat-num" style={{ color: Colors.success }}>{okCount}</div>
             <div className="stat-label">All Good</div>
           </div>
         </div>
         <div className="stat-card">
-          <div className="stat-icon" style={{ background: 'rgba(155,127,234,0.12)' }}>📞</div>
+          <div className="stat-icon" style={{ background: 'var(--accent-lavender-light)', color: 'var(--accent-lavender)' }}>
+            <PhoneCall size={22} />
+          </div>
           <div>
             <div className="stat-num">{totalCalls}</div>
             <div className="stat-label">Total AI Calls</div>
@@ -292,17 +346,18 @@ export default function Dashboard() {
 
       {/* ── Elders section ── */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-        <div style={{ fontSize: 16, fontWeight: 700, color: '#F1F5F9' }}>
-          Your Elders
-          <span style={{ fontSize: 13, color: '#4B6285', fontWeight: 500, marginLeft: 8 }}>({filtered.length})</span>
+        <div style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-primary)' }}>
+          Elders in Your Care
+          <span style={{ fontSize: 13, color: 'var(--text-muted)', fontWeight: 500, marginLeft: 8 }}>({filtered.length})</span>
         </div>
         {elders.length > 0 && (
           <div style={{
             display: 'flex', alignItems: 'center', gap: 8,
-            background: '#111D35', border: '1px solid #1E2C45', borderRadius: 10,
+            background: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: 10,
             padding: '8px 14px',
+            boxShadow: 'var(--card-shadow)'
           }}>
-            <span style={{ fontSize: 14, color: '#4B6285' }}>🔍</span>
+            <Search size={14} style={{ color: 'var(--text-muted)' }} />
             <input
               type="text"
               value={search}
@@ -310,7 +365,7 @@ export default function Dashboard() {
               placeholder="Search elders..."
               style={{
                 background: 'transparent', border: 'none', outline: 'none',
-                color: '#F1F5F9', fontSize: 14, width: 160,
+                color: 'var(--text-primary)', fontSize: 14, width: 160,
               }}
             />
           </div>
@@ -319,14 +374,14 @@ export default function Dashboard() {
 
       {elders.length === 0 ? (
         <div className="empty-state">
-          <div className="empty-icon">👴</div>
+          <Users size={56} style={{ color: 'var(--text-muted)', marginBottom: 20 }} />
           <div className="empty-title">No elders yet</div>
-          <div className="empty-sub">Add your first elder to start monitoring their health and care</div>
-          <button className="btn-gradient" onClick={() => navigate('/elder/add')}>➕ Add Your First Elder</button>
+          <div className="empty-sub">Add your first elder to start monitoring their wellbeing and connection status</div>
+          <button className="btn-gradient" onClick={() => navigate('/elder/add')}><Plus size={16} /> Add Your First Elder</button>
         </div>
       ) : filtered.length === 0 ? (
         <div className="empty-state" style={{ paddingTop: 40 }}>
-          <div className="empty-icon">🔍</div>
+          <Search size={56} style={{ color: 'var(--text-muted)', marginBottom: 20 }} />
           <div className="empty-title">No results</div>
           <div className="empty-sub">No elders match "{search}"</div>
         </div>
